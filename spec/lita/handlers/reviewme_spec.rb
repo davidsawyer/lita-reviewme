@@ -24,9 +24,25 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
     end
   end
 
+  describe "#add_mixed_case_reviewer" do
+    it "adds a mixed case name to the list" do
+      send_command("add iAmVeRy to reviews")
+
+      expect(reply).to eq("added iamvery to reviews")
+    end
+  end
+
   describe "#remove_reviewer" do
     it "removes a name from the list" do
       send_command("remove iamvery from reviews")
+
+      expect(reply).to eq("removed iamvery from reviews")
+    end
+  end
+
+  describe "#remove_reviewer" do
+    it "removes a name from the list when passed a mixed case version" do
+      send_command("remove iAmVeRy from reviews")
 
       expect(reply).to eq("removed iamvery from reviews")
     end
@@ -136,7 +152,7 @@ describe Lita::Handlers::Reviewme, lita_handler: true do
       expect_any_instance_of(Octokit::Client).to receive(:pull_request)
         .with(repo, id).and_return(pr)
 
-      expected_reviewer = 'NOT THE PR OWNER'
+      expected_reviewer = 'not the pr owner'
       expect_any_instance_of(Octokit::Client).to receive(:add_comment)
         .with(repo, id, ":eyes: @#{expected_reviewer}")
 

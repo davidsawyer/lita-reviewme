@@ -69,13 +69,13 @@ module Lita
       )
 
       def add_reviewer(response, room: get_room(response))
-        reviewer = response.matches.flatten.first
+        reviewer = response.matches.flatten.first.downcase
         ns_redis(room.id).lpush(REDIS_LIST, reviewer)
         response.reply("added #{reviewer} to reviews")
       end
 
       def remove_reviewer(response, room: get_room(response))
-        reviewer = response.matches.flatten.first
+        reviewer = response.matches.flatten.first.downcase
         ns_redis(room.id).lrem(REDIS_LIST, 0, reviewer)
         response.reply("removed #{reviewer} from reviews")
       end
