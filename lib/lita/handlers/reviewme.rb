@@ -14,6 +14,8 @@ module Lita
       config :github_request_review, default: false
       config :github_comment, default: true
 
+      on :loaded, :ensure_usernames_are_lowercase
+
       route(
         /add (.+) to reviews/i,
         :add_reviewer,
@@ -114,6 +116,19 @@ module Lita
         url = response.matches.flatten.first
         reviewer = next_reviewer(room)
         response.reply(chat_mention(reviewer, url))
+      end
+
+      # Now that we lowercase inputted usernames to make our commands fully case insensitive, we
+      # need to migrate all reviewer lists to make sure all usernames are lowercase, or otherwise
+      # users would not be able to remove usernames that already had uppercase characters in them.
+      def ensure_usernames_are_lowercase(payload)
+        lists = redis.keys("*")
+        lists.each { |list|
+          reviewers = redis.lrange(list, 0, -1)
+          reviewers.each_with_index { |reviewer, i|
+            redis.lset(list, i, reviewer.downcase)
+          }
+        }
       end
 
       private
