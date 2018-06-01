@@ -46,7 +46,7 @@ Note that `reviewer` and `pull_request` are required arguments.
 # `reviewer` is a username string without the '@'
 # `pull_request` is a hash object from GitHub API.
 
-config.handlers.reviewme.github_comment_template = lamda do |reviewer, pull_request|
+config.handlers.reviewme.github_comment_template = lambda do |reviewer, pull_request|
   title = pull_request[:title]
   "Hey #{reviewer}, check out my new PR called #{title} :tada:"
 end
