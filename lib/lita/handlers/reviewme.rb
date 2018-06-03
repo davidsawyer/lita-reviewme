@@ -122,7 +122,7 @@ module Lita
       # need to migrate all reviewer lists to make sure all usernames are lowercase, or otherwise
       # users would not be able to remove usernames that already had uppercase characters in them.
       def ensure_usernames_are_lowercase(payload)
-        lists = redis.keys("*")
+        lists = redis.keys("*") # get all reviewme namespaced keys
         lists.each { |list|
           reviewers = redis.lrange(list, 0, -1)
           reviewers.each_with_index { |reviewer, i|
